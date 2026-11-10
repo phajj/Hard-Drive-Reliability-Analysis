@@ -21,28 +21,28 @@ This project will model hard drive reliability from real world failure rate data
 | Claude Code | AI coding assistant, used to help write the scripts and docs |
 
 ## Running it
-Needs Python 3.12+. First time only, from the repo root (PowerShell):
+Needs Python 3.12+. From the repo root, run the build script for your system:
 
 ```powershell
-python -m venv .venv
-.venv\Scripts\pip install -r requirements.txt
-copy .env.example .env
+ # Windows-based systems (PowerShell)
+.\build.ps1
 ```
-
-Don't rerun `python -m venv .venv` while the venv is active, you'll get a "Permission denied" on `python.exe`. It's harmless but means the venv already exists.
-
-Then activate the venv and run the scripts from inside `scripts/`, in this order. Each one queries the full Backblaze dataset remotely, so they take a few minutes.
-
-```powershell
-.venv\Scripts\Activate.ps1
-cd scripts
-python connect.py            # quick test, prints the table's columns
-python drive_types.py        # labels models HDD/SSD and boot/data -> data/drive_models.csv
-python check_failed_rows.py  # checks if failed drives drop out of later reports
-python build_samples.py      # builds the samples -> data/samples/
+```bash
+# Unix-based systems, ie Linux/MacOs (Bash)
+./build.sh
 ```
+It sets up `.venv` and `.env` the first time, then runs these in order (about 10 minutes total, since each one queries the full Backblaze dataset remotely):
 
-If PowerShell blocks `Activate.ps1`, run `Set-ExecutionPolicy -Scope Process RemoteSigned` first.
+| Step | What it does |
+|---|---|
+| `connect.py` | Quick connection test, prints the table's columns |
+| `drive_types.py` | Labels models HDD/SSD and boot/data -> `data/drive_models.csv` |
+| `check_failed_rows.py` | Checks if failed drives drop out of later reports |
+| `build_samples.py` | Builds the samples -> `data/samples/` |
+
+It stops at the first step that fails. To run one step on its own, activate the venv and run it from inside `scripts/`, e.g. `python build_samples.py`.
+
+If PowerShell blocks the script, run `Set-ExecutionPolicy -Scope Process RemoteSigned` first.
 
 Checking the output:
 - Each file in `data/samples/` should have 1000 drives.
