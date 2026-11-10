@@ -43,6 +43,7 @@ Keep it simple. Write it the way someone on the team would explain it to a class
 - Scope right now is gathering data and planning. No modeling yet.
 
 ## Layout
+- `build.ps1` / `build.sh` - run every step below in order (sets up the venv and `.env` first if needed)
 - `scripts/` - Python scripts. Run in this order:
   1. `drive_types.py` - labels every model HDD/SSD and boot/data, writes `data/drive_models.csv`
   2. `check_failed_rows.py` - checks whether failed drives drop out of later reports
