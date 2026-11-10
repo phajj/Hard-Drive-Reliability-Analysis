@@ -19,17 +19,20 @@ This is currently the project's only data source.
 
 ### HDD vs. SSD
 
-- The files are mostly HDDs. Since **Q4 2018**, the boot drives of Backblaze's storage servers are in the same daily files. Many of them are SSDs and some are small HDDs. Data before Q4 2018 is HDD only.
+- The files are mostly HDDs. Boot drives of Backblaze's storage servers are in the same daily files. The first SSDs show up in **Q4 2018**. Small boot HDDs (80 GB–1 TB, many of them 2.5" laptop drives) show up as early as 2014.
 - **There is no drive-type column.** The only way to tell SSDs from HDDs (and boot drives from data drives) is the **`model`** column.
 - SSD models are mostly easy to spot by name, e.g. Seagate `ZA…` (BarraCuda/IronWolf SSD), Dell `SSDSC…`, Micron `MTFD…`, Crucial `CT…`, WDC `WDS…`. Build the full list from the models in the data, checked against Backblaze's yearly "SSD Edition" Drive Stats posts.
 - Capacity alone is not a reliable test, because some boot HDDs are also small.
-- SSDs are a small share of the data (low thousands of drives, compared with ~350k HDDs). Boot drives also have a different workload from data drives, so keep that in mind when comparing HDDs and SSDs.
+- SSDs are a small share of the data: 26 models, about 4,000 drives, compared with ~540k HDDs over all years. Boot drives also have a different workload from data drives, so keep that in mind when comparing HDDs and SSDs.
+- Our labels are in `data/drive_models.csv` (made by `scripts/drive_types.py`). As a check, HDDs report spin-up time (`smart_3`) and spin retries (`smart_10`) and SSDs don't. Every SSD model reports neither. A few 2013–2015 HDD models get flagged, but only because the early files have fewer SMART columns.
 
 ### Modeling notes
 
 - A drive's lifetime runs from its first to its last day in the data, and `failure = 1` on its last day means it failed. Drives that disappear without a failure, or are still running at the end, count as censored.
 - Drives already running when the data starts in April 2013 are left-truncated: their early life wasn't observed. Survival fitting needs to account for this.
-- SMART attribute 9 (`smart_9_raw`, power-on hours) gives a drive's real age, including drives installed before the data starts.
+- SMART attribute 9 (`smart_9_raw`, power-on hours) gives a drive's real age, including drives installed before the data starts. **We use power-on hours as our measure of drive life**, not days in the data. Some models report it in odd units or with junk values, so the samples flag drives where it doesn't match the calendar (`poh_suspect`).
+- **Do failed drives drop out?** Mostly yes. We checked every drive with a `failure = 1` row (`scripts/check_failed_rows.py`). Out of 34,728 failed drives, 33,508 (96.5%) never show up again after their failure day. 1,220 do, usually the next day (median 1 day later), and some keep going for years, probably because the drive was put back in service. 67 drives have more than one failure row. Our samples cut each drive off at its first failure.
+- Model names sometimes have extra spaces (`WDC  WUH721414ALE6L4` vs `WDC WUH721414ALE6L4`), so `scripts/connect.py` cleans them up.
 
 ## Possible Additional Sources
 
