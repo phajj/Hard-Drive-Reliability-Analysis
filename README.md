@@ -52,3 +52,4 @@ Checking the output:
 ## Resources:
 - [SOURCES](./SOURCES.md): where the data comes from
 - [ANALYSIS_PLAN](./ANALYSIS_PLAN.md): what's in the samples and what we're looking at first
+- [rpm_analysis](./rpm_analysis/README.md): spin speed (RPM) vs failure rate: download pipeline, RPM-stratified samples and a results website
