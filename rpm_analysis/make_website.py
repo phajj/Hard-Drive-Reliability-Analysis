@@ -1,7 +1,8 @@
 """Build a small website that shows the sample: failures over time and the failure rate per RPM class.
 
 Reads the sample (default sample.parquet), counts failures per calendar quarter for each speed
-class, computes each class's annualized failure rate, and writes one self-contained page.
+class, computes each class's annualized failure rate, and writes one page. The page loads its
+script from app.js, which must sit in the same folder (website/app.js).
 
 A drive's failure date is the last day it reported (Backblaze marks failure = 1 on that day).
 AFR = failures / drive-years, where drive-years = days observed / 365.
