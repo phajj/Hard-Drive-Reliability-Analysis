@@ -1,0 +1,13 @@
+# Raw Backblaze zips (about 34 GB) and in-progress downloads
+data/
+*.zip
+*.part
+
+# Intermediate build outputs (regenerate with process_zips.py / build_drive_table.py)
+work/
+summaries/
+drives.parquet
+*.parquet.partial
+
+# Logs
+*.log
