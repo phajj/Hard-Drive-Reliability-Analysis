@@ -1,8 +1,9 @@
 """Build a small website that shows the sample: failures over time and the failure rate per RPM class.
 
 Reads the sample (default sample.parquet), counts failures per calendar quarter for each speed
-class, computes each class's annualized failure rate, and writes one page. The page loads its
-script from app.js, which must sit in the same folder (website/app.js).
+class, computes each class's annualized failure rate, and writes one page plus its data file
+(index.html -> index.data.js). The page also loads app.js and style.css, which must sit in the
+same folder (website/).
 
 A drive's failure date is the last day it reported (Backblaze marks failure = 1 on that day).
 AFR = failures / drive-years, where drive-years = days observed / 365.
@@ -70,13 +71,14 @@ def main() -> None:
     args = ap.parse_args()
 
     data = build_data(args.sample)
-    # Escape "</" so a value can never close the <script> tag the JSON sits in.
-    payload = json.dumps(data).replace("</", "<\\/")
-    html = TEMPLATE.read_text(encoding="utf-8").replace("__DATA__", payload)
+    # Data goes in a .js file (not .json) so the page still works when opened straight from disk.
+    data_file = args.out.with_suffix(".data.js")
+    html = TEMPLATE.read_text(encoding="utf-8").replace("__DATA_FILE__", data_file.name)
     args.out.parent.mkdir(parents=True, exist_ok=True)
+    data_file.write_text(f"window.DATA = {json.dumps(data)};\n", encoding="utf-8")
     args.out.write_text(html, encoding="utf-8")
     m = data["meta"]
-    print(f"Wrote {args.out} from {args.sample}: {m['drives']:,} drives, {m['failures']:,} failures, "
+    print(f"Wrote {args.out} and {data_file.name} from {args.sample}: {m['drives']:,} drives, {m['failures']:,} failures, "
           f"{len(data['quarters'])} quarters")
 
 

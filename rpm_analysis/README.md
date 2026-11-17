@@ -78,7 +78,8 @@ querying Backblaze's hosted copy, so it needs no access keys.
 - The page shows **cumulative** failures per quarter (dots, one color per RPM class) and each class's AFR.
   It's built from `sample.parquet`. For the all-era sample, run
   `python make_website.py --sample sample_all_eras.parquet --out website/all_eras.html`.
-- The page's script is `website/app.js`. Keep it next to the HTML files. Edit it there, not in the template.
+- The page's script is `website/app.js` and its styles are `website/style.css`. Edit them there, not in the template.
+- Each page's data is written to its own file next to it (`index.html` -> `index.data.js`).
 - Re-run it after redrawing the sample.
 
 ## Interpreting the results

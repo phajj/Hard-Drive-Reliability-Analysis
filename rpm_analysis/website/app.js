@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var DATA = window.DATA;
   var SVG_NS = "http://www.w3.org/2000/svg";
   var META = DATA.meta;
   var SUMMARY = DATA.summary;
