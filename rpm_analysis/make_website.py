@@ -7,7 +7,7 @@ A drive's failure date is the last day it reported (Backblaze marks failure = 1 
 AFR = failures / drive-years, where drive-years = days observed / 365.
 
 Usage:
-    python make_website.py [--sample sample.parquet] [--out website/index.html]
+    python make_website.py [--sample sample.parquet] [--out ../site/rpm/index.html]
 """
 import argparse
 import json
@@ -65,7 +65,7 @@ def build_data(sample_path: Path) -> dict:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sample", type=Path, default=Path("sample.parquet"))
-    ap.add_argument("--out", type=Path, default=Path("website/index.html"))
+    ap.add_argument("--out", type=Path, default=Path("../site/rpm/index.html"))
     args = ap.parse_args()
 
     data = build_data(args.sample)
