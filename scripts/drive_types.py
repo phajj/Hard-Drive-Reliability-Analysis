@@ -1,4 +1,6 @@
-"""Label every drive model in the data as HDD or SSD, and boot or data.
+"""Label every drive model in the data as HDD or SSD, boot or data, and by manufacturer.
+
+We only analyze HDDs. SSDs are labelled so they can be left out.
 
 There's no drive type column, so this goes off the model name, with a
 SMART check on top: HDDs report spin-up time (smart_3) and spin retries
@@ -8,7 +10,10 @@ get check_by_hand = True.
 Boot vs data: all SSDs are boot drives. HDDs under 1 TB, plus 2.5" laptop
 models, are boot drives too. Everything else is a data drive.
 
-Writes data/drive_models.csv and prints the SSD and boot lists for a manual check.
+Manufacturer: also from the model name. Only Seagate, Western Digital (incl. HGST and Hitachi)
+and Toshiba are labelled; everything else is "Other".
+
+Writes data/drive_models.csv and prints the SSD, boot and "Other" lists for a manual check.
 """
 import re
 
@@ -46,6 +51,24 @@ def role(row) -> str:
     return "data"
 
 
+# Manufacturer from the model name, checked in order. Only the big three are analyzed; the rest is "Other".
+# HGST and Hitachi count as Western Digital: WD bought Hitachi's drive business (HGST) in 2012, and
+# "WDC WUH..." Ultrastars are the renamed "HGST HUH..." line. Some HGST models have no prefix (e.g. HUH721212ALE604).
+# "ST... HN" laptop drives (e.g. ST500LM012 HN) were built by Samsung but sold as Seagate, so they count as Seagate.
+MANUFACTURER_RULES = [
+    ("Seagate", re.compile(r"^(ST\d|Seagate\b)", re.IGNORECASE)),
+    ("Toshiba", re.compile(r"^TOSHIBA\b", re.IGNORECASE)),
+    ("Western Digital", re.compile(r"^(WDC\b|WD\b|WUH\d|HGST\b|Hitachi\b|H[A-Z]{2}\d)", re.IGNORECASE)),
+]
+
+
+def manufacturer(model: str) -> str:
+    for name, pattern in MANUFACTURER_RULES:
+        if pattern.search(model.strip()):
+            return name
+    return "Other"
+
+
 def main():
     con = connect()
     print("Scanning models (one pass over the model column, takes a few minutes)...")
@@ -66,6 +89,7 @@ def main():
     """).df()
     models["drive_type"] = models["model"].map(drive_type)
     models["role"] = models.apply(role, axis=1)
+    models["manufacturer"] = models["model"].map(manufacturer)
     models["check_by_hand"] = (
         ((models["drive_type"] == "SSD") & (models["spin_attr_share"] > 0.5))
         | ((models["drive_type"] == "HDD") & (models["spin_attr_share"] < 0.5))
@@ -87,6 +111,9 @@ def main():
     print(boot_hdd[cols].to_string(index=False))
     print("\nName and SMART disagree (check these by hand):")
     print(flagged[cols + ["drive_type"]].to_string(index=False) if len(flagged) else "none")
+    other = models[models["manufacturer"] == "Other"]
+    print("\nNot Seagate, Western Digital or Toshiba (left out of per-manufacturer analysis):")
+    print(other[cols + ["drive_type"]].to_string(index=False) if len(other) else "none")
 
 
 if __name__ == "__main__":
