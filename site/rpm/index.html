@@ -6,13 +6,20 @@
 <title>Drive Failures by Spin Speed</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/assets/nav.css">
+<script src="/assets/nav.js" defer></script>
 </head>
 <body>
+<nav id="site-nav" class="site-nav"></nav>
 <div class="wrap">
 
   <header>
     <h1>Drive failures by spin speed</h1>
     <p class="sub" id="subtitle"></p>
+    <nav class="sample-switch" aria-label="Sample">
+      <a href="index.html">Main sample (era-matched)</a>
+      <a href="all_eras.html">All eras</a>
+    </nav>
   </header>
 
   <section class="cards" id="cards" aria-label="Annualized failure rate by spin speed"></section>
@@ -26,16 +33,6 @@
     </div>
     <p class="note">Each dot is the total number of sampled drives in that RPM class that had failed by the end of that quarter. Totals keep growing with how long each class has been observed, so compare classes using the failure rates above.</p>
   </section>
-
-  <details>
-    <summary>Show data table</summary>
-    <div class="table-wrap">
-      <table id="data-table">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </details>
 
   <footer id="footer"></footer>
 

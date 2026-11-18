@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hard Drive Reliability</title>
+<meta name="description" content="How long hard drives last, using Backblaze's daily drive reports.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/nav.css">
+<script src="/assets/nav.js" defer></script>
+</head>
+<body>
+<nav id="site-nav" class="site-nav"></nav>
+
+<main class="wrap">
+  <header>
+    <h1>Hard drive reliability</h1>
+    <p class="intro">
+      Backblaze runs hundreds of thousands of drives and publishes a daily report on each one.
+      We use that data to ask what makes hard drives fail sooner: the model, how fast it spins, and who made it (Seagate, Western Digital or Toshiba).
+    </p>
+  </header>
+
+  <section class="facts" aria-label="About the data">
+    <div class="fact">
+      <div class="fact-value">2013–2026</div>
+      <div class="fact-label">Years of daily drive reports</div>
+    </div>
+    <div class="fact">
+      <div class="fact-value">Backblaze</div>
+      <div class="fact-label">Drive Stats, from their data centers</div>
+    </div>
+    <div class="fact">
+      <div class="fact-value">Power-on hours</div>
+      <div class="fact-label">How we measure drive life (SMART 9)</div>
+    </div>
+    <div class="fact">
+      <div class="fact-value">AFR</div>
+      <div class="fact-label">Failures per drive-year, as a percent</div>
+    </div>
+  </section>
+
+  <h2>Topics</h2>
+  <section class="topics" id="topic-cards" aria-label="Analysis topics"></section>
+
+  <footer>
+    <p>Data Modeling and Simulation project by Peter Hajj and Jackson Higgins.</p>
+    <p>Data: <a href="https://www.backblaze.com/cloud-storage/resources/hard-drive-test-data">Backblaze Hard Drive Data</a>. Code: <a href="https://github.com/phajj/Hard-Drive-Reliability-Analysis">GitHub</a>.</p>
+  </footer>
+</main>
+</body>
+</html>

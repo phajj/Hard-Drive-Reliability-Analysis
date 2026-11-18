@@ -7,13 +7,11 @@ All in `data/samples/`, built by `scripts/build_samples.py`. Drives are picked a
 |---|---|
 | `failed_1000.csv` | 1000 random drives that failed. Our main sample. |
 | `hdd_random_1000.csv` | 1000 random data HDDs (the ones that store customer data), failed or not |
-| `boot_hdd_random_1000.csv` | 1000 random boot HDDs still running on or after Q4 2018, failed or not |
-| `ssd_random_1000.csv` | 1000 random SSDs (all boot drives), failed or not |
 | `model_totals.csv` | Every model: number of drives, failures, drive-days and drive-hours. Used for failure rates. |
 
-The 1000 failed drives only tell us how long drives lasted *when* they failed. To compare how *often* models fail we also need the drives that didn't fail, which is what `model_totals.csv` is for.
+We only analyze HDDs. `failed_1000.csv` can include a few SSDs, so filter to `drive_type = HDD`.
 
-There aren't 1000 failed SSDs in the Backblaze data, so the HDD vs SSD samples are random drives instead. Most of them won't have failed yet.
+The 1000 failed drives only tell us how long drives lasted *when* they failed. To compare how *often* models fail we also need the drives that didn't fail, which is what `model_totals.csv` is for.
 
 ### Columns in the sample files
 - `serial_number`, `model`, `drive_type` (HDD or SSD), `role` (boot or data), `capacity_bytes`, `datacenter`
@@ -26,7 +24,10 @@ There aren't 1000 failed SSDs in the Backblaze data, so the HDD vs SSD samples a
 
 ## What we look at first
 1. **HDD model vs HDD model.** Power-on hours at failure by model, maker and capacity (from `failed_1000.csv`), and failures per drive-year by model (from `model_totals.csv`). This is the biggest and cleanest part of the data, so it's the place to start.
+   - Run every model on Seagate, Western Digital and Toshiba separately, then compare the three. The `manufacturer` column in `data/drive_models.csv` says which is which (join on `model`). HGST and Hitachi count as WD; other makers are left out.
+   - HDD drive-days by maker: Seagate 48%, Western Digital 30% (12% WDC + 16% HGST + 2% Hitachi), Toshiba 21%.
 2. **Spin speed (RPM).** RPM isn't in the data. We'll make `data/model_specs.csv` by hand from spec sheets for the models that show up, then check whether RPM lines up with failure rate.
-3. **HDD vs SSD.** Since most drives haven't failed, this needs survival curves rather than plain averages.
-   - Main comparison: SSDs vs boot HDDs. Both do the same job (booting the storage servers) over the same years, so the difference is mostly down to the drive type.
-   - Second comparison: SSDs vs data HDDs. Data HDDs do much heavier work, so differences here mix drive type with workload.
+3. **Seagate vs Western Digital vs Toshiba.** Put the per-manufacturer results from step 1 side by side.
+   - Compare power-on hours at failure and failures per drive-year for each maker.
+   - Since most drives haven't failed, compare survival curves rather than plain averages.
+   - Makers bought different models in different years, so compare drives of similar age and capacity where we can. Otherwise a maker difference may really be an era difference.

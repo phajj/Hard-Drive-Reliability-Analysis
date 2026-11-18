@@ -40,7 +40,7 @@ querying Backblaze's hosted copy, so it needs no access keys.
 | 5. Label RPM | Already done: `rpm` and `rpm_source` are filled in `models_to_label.csv` | |
 | 6a. Sample (main) | `python sample_by_rpm.py` | `sample.parquet`: era-matched, 5,000 drives per class |
 | 6b. Sample (all eras) | `python sample_by_rpm.py --all-eras --out sample_all_eras.parquet` | `sample_all_eras.parquet`: comparison sample |
-| 7. Website | `python make_website.py` | `website/index.html` (open it in a browser) |
+| 7. Website | `python make_website.py` | `../site/rpm/index.html` (served by the site, see the root README) |
 
 ### Step 2 notes
 - Each zip is extracted to `work/`, summarized, and the CSVs are deleted, so you only need
@@ -77,8 +77,8 @@ querying Backblaze's hosted copy, so it needs no access keys.
 ### Step 7 notes
 - The page shows **cumulative** failures per quarter (dots, one color per RPM class) and each class's AFR.
   It's built from `sample.parquet`. For the all-era sample, run
-  `python make_website.py --sample sample_all_eras.parquet --out website/all_eras.html`.
-- The page's script is `website/app.js` and its styles are `website/style.css`. Edit them there, not in the template.
+  `python make_website.py --sample sample_all_eras.parquet --out ../site/rpm/all_eras.html`.
+- The page's script is `site/rpm/app.js` and its styles are `site/rpm/style.css`. Edit them there, not in the template.
 - Each page's data is written to its own file next to it (`index.html` -> `index.data.js`).
 - Re-run it after redrawing the sample.
 

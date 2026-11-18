@@ -1,0 +1,50 @@
+/* Shared nav bar. Loaded by every page, including the generated topic pages,
+   so it only styles the nav and relies on each page's color tokens (with fallbacks). */
+.site-nav {
+  background: var(--surface, #fcfcfb);
+  border-bottom: 1px solid var(--border, rgba(11, 11, 11, 0.10));
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.site-nav-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 52px;
+}
+.site-nav-brand {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text, #0b0b0b);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.site-nav-links {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  min-width: 0;
+}
+.site-nav-links::-webkit-scrollbar { display: none; }
+.site-nav-link {
+  color: var(--text-2, #52514e);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.site-nav-link:hover { color: var(--text, #0b0b0b); background: var(--grid, #e1e0d9); }
+.site-nav-link[aria-current="page"] { color: var(--text, #0b0b0b); background: var(--grid, #e1e0d9); }
+.site-nav a:focus-visible {
+  outline: 2px solid var(--text-2, #52514e);
+  outline-offset: 2px;
+}
+@media (max-width: 479px) {
+  .site-nav-inner { gap: 12px; }
+}

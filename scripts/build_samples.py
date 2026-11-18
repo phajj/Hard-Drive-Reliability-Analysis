@@ -2,9 +2,6 @@
 
 - failed_1000.csv           1000 random drives that failed (any type)
 - hdd_random_1000.csv       1000 random data HDDs, failed or not
-- boot_hdd_random_1000.csv  1000 random boot HDDs still running on or after Q4 2018
-                            (when the SSDs show up), failed or not
-- ssd_random_1000.csv       1000 random SSDs (all boot drives), failed or not
 - model_totals.csv          drives, failures and drive-days for every model
 
 Run drive_types.py first (this reads data/drive_models.csv).
@@ -15,7 +12,6 @@ from connect import DATA, connect
 
 SEED = "42"
 N = 1000
-SSD_ERA = "2018-10-01"  # first SSDs show up in Q4 2018
 OUT = DATA / "samples"
 
 
@@ -69,12 +65,9 @@ def main():
 
     pick("failed", "failed = 1")
     pick("hdd", "drive_type = 'HDD' AND role = 'data'")
-    pick("boot_hdd", f"drive_type = 'HDD' AND role = 'boot' AND last_date >= DATE '{SSD_ERA}'")
-    pick("ssd", "drive_type = 'SSD'")
     con.sql("""
         CREATE TABLE picks AS
         SELECT * FROM pick_failed UNION SELECT * FROM pick_hdd
-        UNION SELECT * FROM pick_boot_hdd UNION SELECT * FROM pick_ssd
     """)
 
     # Pass 2: details for just the picked drives, up to their first failure
@@ -122,8 +115,6 @@ def main():
     samples = [
         ("failed", "failed_1000.csv"),
         ("hdd", "hdd_random_1000.csv"),
-        ("boot_hdd", "boot_hdd_random_1000.csv"),
-        ("ssd", "ssd_random_1000.csv"),
     ]
     for name, file in samples:
         df = con.sql(f"""

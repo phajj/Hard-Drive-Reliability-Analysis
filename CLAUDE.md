@@ -33,21 +33,24 @@ Keep it simple. Write it the way someone on the team would explain it to a class
 - **Drive life** is measured in power-on hours (`smart_9_raw`), not days in the data.
 - **Samples** (fixed seed so they're reproducible):
   - 1000 random failed drives (main sample)
-  - 1000 random data HDDs, 1000 random boot HDDs (from Q4 2018 on) and 1000 random SSDs, failed or not (Backblaze doesn't have 1000 failed SSDs)
+  - 1000 random data HDDs, failed or not
   - per-model totals (drives, failures, drive-days) so we can work out failure rates
-- **HDD vs SSD** is told apart by model name, with a SMART check (`smart_3`/`smart_10` are HDD-only). There's no drive type column.
-- **SSDs in this data are boot drives.** HDDs under 1 TB and 2.5" laptop models are also boot drives. The main HDD vs SSD comparison is SSD vs boot HDD (same job). SSD vs data HDD is secondary.
+- **HDDs only.** SSDs are in the data but we don't analyze them. They're told apart by model name, with a SMART check (`smart_3`/`smart_10` are HDD-only), so they can be filtered out. There's no drive type column.
+- **Manufacturer** also comes from the model name (no column for it either). Only the big three are analyzed: Seagate, Western Digital and Toshiba. HGST and Hitachi count as Western Digital (WD owns them). Everything else is `Other` and gets dropped. Note: `rpm_analysis/` has its own older labels that keep HGST separate.
+- **Boot vs data:** HDDs under 1 TB and 2.5" laptop models are boot drives for Backblaze's servers. Everything else is a data drive.
 - **Failed drives** mostly drop out after their failure day (96.5%). Samples cut each drive off at its first failure.
 - **Spin speed (RPM)** isn't in the data. It needs a hand-made model → RPM lookup.
-- **Analysis order:** HDD model vs model → RPM vs failure rate → HDD vs SSD. See [ANALYSIS_PLAN.md](./ANALYSIS_PLAN.md).
+- **Analysis order:** HDD model vs model (run per manufacturer) → RPM vs failure rate → Seagate vs WD vs Toshiba. See [ANALYSIS_PLAN.md](./ANALYSIS_PLAN.md).
 - Scope right now is gathering data and planning. No modeling yet.
 
 ## Layout
 - `build.ps1` / `build.sh` - run every step below in order (sets up the venv and `.env` first if needed)
 - `scripts/` - Python scripts. Run in this order:
-  1. `drive_types.py` - labels every model HDD/SSD and boot/data, writes `data/drive_models.csv`
+  1. `drive_types.py` - labels every model HDD/SSD, boot/data and manufacturer, writes `data/drive_models.csv`
   2. `check_failed_rows.py` - checks whether failed drives drop out of later reports
   3. `build_samples.py` - writes the sample files to `data/samples/`
 - `scripts/connect.py` - shared DuckDB connection to the Iceberg data
 - `data/samples/` - sample CSVs (small, committed)
+- `site/` - the results website: homepage, shared nav (`site/assets/nav.js`), one folder per topic
+- `server.js` - Express app that serves `site/` (`npm start`)
 - Access keys go in `.env` (copy `.env.example`). Never commit `.env`.

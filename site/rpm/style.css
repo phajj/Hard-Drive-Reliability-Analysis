@@ -69,7 +69,7 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 @media (max-width: 699px) {
   .cards { grid-template-columns: 1fr; }
 }
-.card, .chart-card, details {
+.card, .chart-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -173,26 +173,28 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 
 .note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
 
-details { margin-top: 16px; }
-summary { cursor: pointer; font-weight: 500; }
-.table-wrap { overflow-x: auto; margin-top: 12px; }
-table {
-  border-collapse: collapse;
-  width: 100%;
-  min-width: 420px;
+.new { color: var(--muted); }
+
+.sample-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: -12px 0 24px;
   font-size: 13px;
 }
-th, td {
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--grid);
-  text-align: left;
+.sample-switch a {
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
 }
-th { color: var(--text-2); font-weight: 500; }
-th.num, td.num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+.sample-switch a:hover { color: var(--text); }
+.sample-switch a[aria-current="page"] {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--muted);
 }
-.new { color: var(--muted); }
 
 footer {
   color: var(--muted);

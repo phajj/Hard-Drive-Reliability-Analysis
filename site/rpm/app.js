@@ -1,6 +1,12 @@
 (function () {
   "use strict";
 
+  // Mark the current sample in the switch.
+  var page = location.pathname.split("/").pop() || "index.html";
+  document.querySelectorAll(".sample-switch a").forEach(function (a) {
+    if (a.getAttribute("href") === page) a.setAttribute("aria-current", "page");
+  });
+
   var DATA = window.DATA;
   var SVG_NS = "http://www.w3.org/2000/svg";
   var META = DATA.meta;
@@ -294,25 +300,6 @@
     }
     e.preventDefault();
     update();
-  });
-
-  /* Failure-rate table */
-  var thead = document.querySelector("#data-table thead");
-  var tbody = document.querySelector("#data-table tbody");
-  var headRow = h("tr");
-  headRow.appendChild(h("th", "", "Quarter"));
-  CLASSES.forEach(function (rpm) { headRow.appendChild(h("th", "num", label(rpm) + " (total, +new)")); });
-  thead.appendChild(headRow);
-
-  QUARTERS.forEach(function (q, i) {
-    var tr = h("tr");
-    tr.appendChild(h("td", "", q));
-    CLASSES.forEach(function (rpm) {
-      var td = h("td", "num");
-      appendCount(td, rpm, i);
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
   });
 
 

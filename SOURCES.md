@@ -17,14 +17,12 @@ This is currently the project's only data source.
 | Scale | ~354k drives in service (Q2 2026). Lifetime: 558M drive-days, 21,609 failures. |
 | License | Free to use as long as Backblaze is cited. Work built on the data may be sold; the data itself may not. |
 
-### HDD vs. SSD
+### Drive type and manufacturer
 
-- The files are mostly HDDs. Boot drives of Backblaze's storage servers are in the same daily files. The first SSDs show up in **Q4 2018**. Small boot HDDs (80 GB–1 TB, many of them 2.5" laptop drives) show up as early as 2014.
-- **There is no drive-type column.** The only way to tell SSDs from HDDs (and boot drives from data drives) is the **`model`** column.
-- SSD models are mostly easy to spot by name, e.g. Seagate `ZA…` (BarraCuda/IronWolf SSD), Dell `SSDSC…`, Micron `MTFD…`, Crucial `CT…`, WDC `WDS…`. Build the full list from the models in the data, checked against Backblaze's yearly "SSD Edition" Drive Stats posts.
-- Capacity alone is not a reliable test, because some boot HDDs are also small.
-- SSDs are a small share of the data: 26 models, about 4,000 drives, compared with ~540k HDDs over all years. Boot drives also have a different workload from data drives, so keep that in mind when comparing HDDs and SSDs.
-- Our labels are in `data/drive_models.csv` (made by `scripts/drive_types.py`). As a check, HDDs report spin-up time (`smart_3`) and spin retries (`smart_10`) and SSDs don't. Every SSD model reports neither. A few 2013–2015 HDD models get flagged, but only because the early files have fewer SMART columns.
+- We only analyze HDDs. The files also have a few SSDs (from Q4 2018 on, 26 models, about 4,000 drives vs ~540k HDDs), which we filter out.
+- **There is no drive-type or manufacturer column.** Both come from the **`model`** column. Our labels are in `data/drive_models.csv` (made by `scripts/drive_types.py`).
+- SSDs are spotted by name (e.g. Seagate `ZA…`, Micron `MTFD…`, Crucial `CT…`, WDC `WDS…`). As a check, HDDs report spin-up time (`smart_3`) and spin retries (`smart_10`) and SSDs don't. A few 2013–2015 HDD models get flagged, but only because the early files have fewer SMART columns.
+- Manufacturer: `ST…` is Seagate, `TOSHIBA …` is Toshiba, and `WDC …`, `HGST …` and `Hitachi …` are Western Digital (WD bought Hitachi's drive business, HGST, in 2012). Other makers are left out.
 
 ### Modeling notes
 
@@ -36,14 +34,11 @@ This is currently the project's only data source.
 
 ## Possible Additional Sources
 
-For use if more data is needed, such as more SSDs, a second group of HDDs for validation, or data on failures that happen together.
+For use if more data is needed, such as a second group of HDDs for validation, or data on failures that happen together.
 
 | Source | Drive type | Coverage / size | Access / license | Possible use |
 |---|---|---|---|---|
-| [Alibaba SSD SMART dataset (Tianchi)](https://tianchi.aliyun.com/dataset/95044), described in [alibaba-edu/dcbrain](https://github.com/alibaba-edu/dcbrain/blob/master/ssd_smart_logs/readme.md) | SSD | ~500k SSDs across 6 models, daily SMART data and failures, 2018–2019, ~4.3 GB per year | Needs a free Tianchi account. Non-commercial license (CC BY-NC-SA 4.0). | Much larger SSD group for HDD vs. SSD comparison |
 | [Alibaba Large-scale Disk Failure Prediction Dataset (Tianchi)](https://tianchi.aliyun.com/dataset/70251), mirror on [OpenI](https://openi.pcl.ac.cn/Cx/Large-scale-Disk-Failure-Prediction-Dataset) | HDD | Daily SMART logs and failure labels, Jul 2017 – Dec 2018 | Non-commercial license (CC BY-NC-SA 4.0). The Tianchi listing said it was temporarily unavailable; the OpenI mirror may work instead. | Second HDD group, to check whether the models hold up outside Backblaze |
-| [NVMe SSD Open Dataset (OpenI)](https://openi.pcl.ac.cn/Cx/NVMe-SSD-Open-Dataset) | SSD (NVMe) | ~700k SSDs across 11 drive families from 3 vendors, 1 year. Files: `ssd_smart.csv`, `ssd_failure_ticket.csv` | Free on OpenI. Goes with a USENIX ATC '22 paper. | More SSD data, but only one year |
-| [Alibaba correlated SSD failures (USENIX FAST '21)](https://www.usenix.org/conference/fast21/presentation/han) | SSD | ~1M SSDs across 11 models: SMART logs, trouble tickets, physical location, applications | Released by the authors for public use | Modeling failures that happen together in RAID/mirror simulations |
 | [SMART-Z (Nature Scientific Data, 2025)](https://www.nature.com/articles/s41597-025-05457-z) | HDD | 147,496 HDDs in a Chinese video data center, Mar 2017 – Feb 2018 | Hosting and license not yet checked (the paper page wouldn't load) | Another non-Backblaze HDD group |
 | [USENIX Computer Failure Data Repository (CFDR) / LANL](https://www.usenix.org/cfdr) | HDD (SCSI) | Disk replacement records from Los Alamos high-performance computing clusters, ~1996–2006 (e.g. 1,263 failures among 3,406 disks) | Free. Old links, check that they still work. Primary paper: Schroeder & Gibson, "Disk failures in the real world," FAST '07. | History and comparing against classic results |
 | [`hdfail` in the frailtySurv R package](https://rdrr.io/cran/frailtySurv/man/hdfail.html) | HDD | Cleaned Backblaze subset: 52,422 drives (one row each), 2,885 failures, ~2 years. Columns: `serial`, `model`, `time`, `status`, `temp`, `rsc`, `rer`, `psc` | Free on CRAN | Ready-to-use data for testing survival models before the full pipeline is built |
