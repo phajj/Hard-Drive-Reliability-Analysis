@@ -46,11 +46,11 @@ def main():
     s = s[s.manufacturer.isin(labels)]
     data = build_data(s, f"{SAMPLE.name} ({name} drives only)")
 
-    html = (TEMPLATE.read_text(encoding="utf-8")
-            .replace("__MAKER__", name)
-            .replace("__NOTE__", note))
-    if not note:  # don't leave an empty paragraph taking up space
-        html = html.replace('    <p class="note maker-note"></p>\n', "")
+    html = TEMPLATE.read_text(encoding="utf-8")
+    if not note:
+        # Drop the whole note line, so an empty paragraph doesn't add space.
+        html = "".join(line for line in html.splitlines(keepends=True) if "__NOTE__" not in line)
+    html = html.replace("__MAKER__", name).replace("__NOTE__", note)
     out = OUT_DIR / page
     data_file = write_page(data, out, html)
 

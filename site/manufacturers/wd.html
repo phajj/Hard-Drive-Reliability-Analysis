@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Western Digital: Failures by Spin Speed</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<link rel="stylesheet" href="/rpm/style.css">
+<link rel="stylesheet" href="/assets/nav.css">
+<script src="/assets/nav.js" defer></script>
+</head>
+<body>
+<nav id="site-nav" class="site-nav"></nav>
+<div class="wrap">
+
+  <header>
+    <h1>Western Digital: drive failures by spin speed</h1>
+    <p class="sub" id="subtitle"></p>
+    <nav class="sample-switch" aria-label="Manufacturer">
+      <a href="index.html">Seagate</a>
+      <a href="wd.html">Western Digital</a>
+      <a href="toshiba.html">Toshiba</a>
+    </nav>
+    <p class="note" style="margin: -12px 0 24px">HGST and Hitachi count as Western Digital. All the 5700 RPM drives here are HGST.</p>
+  </header>
+
+  <section class="cards" id="cards" aria-label="Annualized failure rate by spin speed"></section>
+
+  <section class="chart-card" aria-labelledby="chart-heading">
+    <h2 id="chart-heading">Cumulative failures</h2>
+    <div class="legend" id="legend"></div>
+    <div class="chart-wrap" id="chart-wrap">
+      <svg id="chart-svg" viewBox="0 0 900 380" width="100%" role="img" tabindex="0" aria-label=""></svg>
+      <div class="tip" id="tip" role="presentation" hidden></div>
+    </div>
+    <p class="note">Each dot is the total number of sampled Western Digital drives in that RPM class that had failed by the end of that quarter. Totals keep growing with how long each class has been observed, so compare classes using the failure rates above.</p>
+  </section>
+
+  <footer id="footer"></footer>
+
+</div>
+
+<script src="wd.data.js"></script>
+<script src="/rpm/app.js"></script>
+</body>
+</html>
