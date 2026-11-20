@@ -49,6 +49,7 @@ Keep it simple. Write it the way someone on the team would explain it to a class
   1. `drive_types.py` - labels every model HDD/SSD, boot/data and manufacturer, writes `data/drive_models.csv`
   2. `check_failed_rows.py` - checks whether failed drives drop out of later reports
   3. `build_samples.py` - writes the sample files to `data/samples/`
+  4. `split_by_maker.py` - splits the samples by manufacturer into `data/samples/by_maker/`
 - `scripts/connect.py` - shared DuckDB connection to the Iceberg data
 - `data/samples/` - sample CSVs (small, committed)
 - `site/` - the results website: homepage, shared nav (`site/assets/nav.js`), one folder per topic

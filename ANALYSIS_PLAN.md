@@ -8,6 +8,7 @@ All in `data/samples/`, built by `scripts/build_samples.py`. Drives are picked a
 | `failed_1000.csv` | 1000 random drives that failed. Our main sample. |
 | `hdd_random_1000.csv` | 1000 random data HDDs (the ones that store customer data), failed or not |
 | `model_totals.csv` | Every model: number of drives, failures, drive-days and drive-hours. Used for failure rates. |
+| `by_maker/<maker>_<sample>.csv` | The three files above split by maker (`seagate`, `wd`, `toshiba`), HDDs only, with a `manufacturer` column. Made by `scripts/split_by_maker.py`. |
 
 We only analyze HDDs. `failed_1000.csv` can include a few SSDs, so filter to `drive_type = HDD`.
 

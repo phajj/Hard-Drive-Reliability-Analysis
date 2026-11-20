@@ -25,7 +25,7 @@ if [ ! -f .env ]; then
 fi
 
 cd scripts
-for step in connect.py drive_types.py check_failed_rows.py build_samples.py; do
+for step in connect.py drive_types.py check_failed_rows.py build_samples.py split_by_maker.py; do
     echo
     echo "=== $step ==="
     "$PY" "$step"
