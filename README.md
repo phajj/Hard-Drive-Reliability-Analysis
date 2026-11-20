@@ -56,6 +56,7 @@ The results website is a small Node app (Express) that serves the `site/` folder
 - `site/index.html`: homepage, one card per topic
 - `site/assets/nav.js`: the list of topics. It builds the nav bar on every page and the homepage cards.
 - `site/<topic>/`: one folder per topic, e.g. `site/rpm/` (made by `rpm_analysis/make_website.py`)
+- `site/manufacturers/`: one scatter per maker. Run `python plot_makers.py seagate` (or `wd`, `toshiba`) from `scripts/` to rebuild its data file and the PNG in `plots/manufacturers/`.
 
 Adding a topic: make `site/<topic>/index.html`, add it to `TOPICS` in `nav.js`, and put this in the page's `<head>` and top of `<body>`:
 ```html

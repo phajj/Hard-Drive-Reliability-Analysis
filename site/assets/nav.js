@@ -24,7 +24,7 @@
       title: "Seagate vs WD vs Toshiba",
       href: "/manufacturers/",
       blurb: "The same models run on each of the three big manufacturers, then compared side by side. HGST and Hitachi count as Western Digital.",
-      status: "soon"
+      status: "live"
     }
   ];
 
