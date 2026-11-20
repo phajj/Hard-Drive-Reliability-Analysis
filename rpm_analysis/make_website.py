@@ -21,8 +21,9 @@ import pandas as pd
 TEMPLATE = Path(__file__).with_name("website_template.html")
 
 
-def build_data(sample_path: Path) -> dict:
-    s = pd.read_parquet(sample_path)
+def build_data(s: pd.DataFrame, sample_name: str) -> dict:
+    """Page data for a sample, or any subset of one. sample_name is shown in the footer."""
+    s = s.copy()  # the date conversions below shouldn't leak into the caller's frame
     s["first_date"] = pd.to_datetime(s.first_date)
     s["last_date"] = pd.to_datetime(s.last_date)
     classes = sorted(s.rpm_class.unique(), key=int)
@@ -53,7 +54,7 @@ def build_data(sample_path: Path) -> dict:
         "series": {cls: [int(v) for v in counts[cls]] for cls in classes},
         "summary": summary,
         "meta": {
-            "sample_file": sample_path.name,
+            "sample_file": sample_name,
             "drives": int(len(s)),
             "failures": int(s.failed.sum()),
             "first_seen_min": str(s.first_date.min().date()),
@@ -64,19 +65,26 @@ def build_data(sample_path: Path) -> dict:
     }
 
 
+def write_page(data: dict, out: Path, template: str) -> Path:
+    """Write the page and its data file (out.html -> out.data.js). Returns the data file's path.
+
+    The data goes in a .js file (not .json) so the page still works when opened straight from disk.
+    """
+    data_file = out.with_suffix(".data.js")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    data_file.write_text(f"window.DATA = {json.dumps(data)};\n", encoding="utf-8")
+    out.write_text(template.replace("__DATA_FILE__", data_file.name), encoding="utf-8")
+    return data_file
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--sample", type=Path, default=Path("sample.parquet"))
     ap.add_argument("--out", type=Path, default=Path("../site/rpm/index.html"))
     args = ap.parse_args()
 
-    data = build_data(args.sample)
-    # Data goes in a .js file (not .json) so the page still works when opened straight from disk.
-    data_file = args.out.with_suffix(".data.js")
-    html = TEMPLATE.read_text(encoding="utf-8").replace("__DATA_FILE__", data_file.name)
-    args.out.parent.mkdir(parents=True, exist_ok=True)
-    data_file.write_text(f"window.DATA = {json.dumps(data)};\n", encoding="utf-8")
-    args.out.write_text(html, encoding="utf-8")
+    data = build_data(pd.read_parquet(args.sample), args.sample.name)
+    data_file = write_page(data, args.out, TEMPLATE.read_text(encoding="utf-8"))
     m = data["meta"]
     print(f"Wrote {args.out} and {data_file.name} from {args.sample}: {m['drives']:,} drives, {m['failures']:,} failures, "
           f"{len(data['quarters'])} quarters")
