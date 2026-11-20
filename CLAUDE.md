@@ -51,7 +51,6 @@ Keep it simple. Write it the way someone on the team would explain it to a class
   3. `build_samples.py` - writes the sample files to `data/samples/`
   4. `split_by_maker.py` - splits the samples by manufacturer into `data/samples/by_maker/`
 - `scripts/connect.py` - shared DuckDB connection to the Iceberg data
-- `scripts/plot_makers.py <maker>` - per-maker scatter of power-on hours at failure: PNG in `plots/manufacturers/`, data for `site/manufacturers/`
 - `data/samples/` - sample CSVs (small, committed)
 - `site/` - the results website: homepage, shared nav (`site/assets/nav.js`), one folder per topic
 - `server.js` - Express app that serves `site/` (`npm start`)
