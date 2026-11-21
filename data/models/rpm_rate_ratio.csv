@@ -1,0 +1,9 @@
+sample,comparison,failures_1,failures_0,rate_ratio,rr_low,rr_high,logrank_p
+main,HGST 7200 vs HGST 5700,89,123,3.4348,2.6149,4.5119,0.0
+main,Seagate 7200 vs Seagate 5900,407,786,0.6225,0.5523,0.7017,0.0
+main,"5900 vs 5700 (all makers, confounded)",786,123,6.1522,5.0874,7.44,0.0
+main,"7200 vs 5700 (all makers, confounded)",496,123,3.7524,3.0801,4.5714,0.0
+all_eras,HGST 7200 vs HGST 5700,47,137,4.5084,3.2369,6.2793,0.0
+all_eras,Seagate 7200 vs Seagate 5900,155,775,0.6903,0.5809,0.8202,0.0011
+all_eras,"5900 vs 5700 (all makers, confounded)",775,137,5.8073,4.8427,6.9641,0.0
+all_eras,"7200 vs 5700 (all makers, confounded)",288,137,3.388,2.7644,4.1523,0.0
