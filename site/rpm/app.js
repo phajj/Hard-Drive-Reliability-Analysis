@@ -82,7 +82,13 @@
     sum.appendChild(h("span", "chev"));
     box.appendChild(sum);
     var list = h("ul", "model-list");
-    m.forEach(function (name) { list.appendChild(h("li", "", name)); });
+    // A model can carry a note (MODEL_NOTES in make_website.py), shown after its name
+    var notes = c.model_notes || {};
+    m.forEach(function (name) {
+      var li = h("li", "", name);
+      if (notes[name]) li.appendChild(h("span", "model-note", " (" + notes[name] + ")"));
+      list.appendChild(li);
+    });
     box.appendChild(list);
     card.appendChild(box);
     cards.appendChild(card);
