@@ -35,6 +35,7 @@ Keep it simple. Write it the way someone on the team would explain it to a class
   - 1000 random failed drives (main sample)
   - 1000 random data HDDs, failed or not
   - per-model totals (drives, failures, drive-days) so we can work out failure rates
+  - for comparing makers: 2000 failed data HDDs from each of Seagate, WD and Toshiba, plus 2000 random data HDDs from each (same number per maker, not the same %; see ANALYSIS_PLAN.md)
 - **HDDs only.** SSDs are in the data but we don't analyze them. They're told apart by model name, with a SMART check (`smart_3`/`smart_10` are HDD-only), so they can be filtered out. There's no drive type column.
 - **Manufacturer** also comes from the model name (no column for it either). Only the big three are analyzed: Seagate, Western Digital and Toshiba. HGST and Hitachi count as Western Digital (WD owns them). Everything else is `Other` and gets dropped. Note: `rpm_analysis/` has its own older labels that keep HGST separate.
 - **Boot vs data:** HDDs under 1 TB and 2.5" laptop models are boot drives for Backblaze's servers. Everything else is a data drive.
