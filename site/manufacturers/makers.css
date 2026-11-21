@@ -22,6 +22,21 @@
   --m-toshiba: #0ca30c;
 }
 
+/* Maker logos on tabs and cards. They sit on a white chip so the dark-text logos stay
+   readable in dark mode without recoloring them. */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 4px;
+  padding: 2px 5px;
+  flex: 0 0 auto;
+}
+.logo img { display: block; height: 12px; width: auto; }
+.sample-switch a { display: inline-flex; align-items: center; gap: 6px; }
+.card-label .logo { margin-left: auto; }
+.card-label .logo img { height: 16px; }
+
 .swatch.rpm-seagate, .dot.rpm-seagate { background: var(--m-seagate); fill: var(--m-seagate); }
 .swatch.rpm-wd, .dot.rpm-wd { background: var(--m-wd); fill: var(--m-wd); }
 .swatch.rpm-toshiba, .dot.rpm-toshiba { background: var(--m-toshiba); fill: var(--m-toshiba); }

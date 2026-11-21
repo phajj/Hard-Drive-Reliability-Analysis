@@ -52,6 +52,18 @@
   var NOUN = DATA.class_noun || "speed class";
   function label(rpm) { return LABELS ? LABELS[rpm] : rpm + " RPM"; }
 
+  // Manufacturer logos (from Wikimedia Commons). Decorative: the name is always shown as text.
+  var LOGOS = { seagate: 1, wd: 1, toshiba: 1 };
+  function logo(maker) {
+    var wrap = h("span", "logo");
+    var img = h("img");
+    img.src = "/assets/logos/" + maker + ".svg";
+    img.alt = "";
+    wrap.appendChild(img);
+    return wrap;
+  }
+  var SHOWS_LOGOS = !!(LABELS || LOGOS[DATA.maker]);
+
   /* Subtitle */
   var perClass = Array.from(new Set(SUMMARY.map(function (c) { return c.drives; })));
   var perClassText = perClass.length === 1
@@ -69,6 +81,9 @@
     var lab = h("div", "card-label");
     lab.appendChild(h("span", "swatch rpm-" + c.rpm));
     lab.appendChild(h("span", "", label(c.rpm)));
+    // Maker logo: per card on the comparison page, the page's maker on a maker page
+    var maker = LABELS ? c.rpm : DATA.maker;
+    if (LOGOS[maker]) lab.appendChild(logo(maker));
     card.appendChild(lab);
     card.appendChild(h("div", "afr", c.afr.toFixed(2) + "%"));
     card.appendChild(h("div", "caption", "annualized failure rate"));
@@ -331,4 +346,8 @@
   footer.appendChild(h("p", "", "AFR (annualized failure rate) = failures ÷ drive-years, where drive-years = days observed ÷ 365."));
   footer.appendChild(h("p", "", "Source: Backblaze Hard Drive Data, sample file " + META.sample_file + "."));
   footer.appendChild(h("p", "", "Generated " + mdy(META.generated) + "."));
+  if (SHOWS_LOGOS) {
+    footer.appendChild(h("p", "", "Seagate, Western Digital (WD) and Toshiba logos are trademarks of their owners, " +
+      "used only to identify each company. This is a student project and isn't affiliated with or endorsed by any of them."));
+  }
 })();
