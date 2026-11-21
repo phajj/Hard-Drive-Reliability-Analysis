@@ -32,15 +32,12 @@ This is currently the project's only data source.
 - **Do failed drives drop out?** Mostly yes. We checked every drive with a `failure = 1` row (`scripts/check_failed_rows.py`). Out of 34,728 failed drives, 33,508 (96.5%) never show up again after their failure day. 1,220 do, usually the next day (median 1 day later), and some keep going for years, probably because the drive was put back in service. 67 drives have more than one failure row. Our samples cut each drive off at its first failure.
 - Model names sometimes have extra spaces (`WDC  WUH721414ALE6L4` vs `WDC WUH721414ALE6L4`), so `scripts/connect.py` cleans them up.
 
-## Possible Additional Sources
+## Logos
 
-For use if more data is needed, such as a second group of HDDs for validation, or data on failures that happen together.
+The manufacturer logos on the site (`site/assets/logos/`) come from Wikimedia Commons, the media library Wikipedia uses.
 
-| Source | Drive type | Coverage / size | Access / license | Possible use |
-|---|---|---|---|---|
-| [Alibaba Large-scale Disk Failure Prediction Dataset (Tianchi)](https://tianchi.aliyun.com/dataset/70251), mirror on [OpenI](https://openi.pcl.ac.cn/Cx/Large-scale-Disk-Failure-Prediction-Dataset) | HDD | Daily SMART logs and failure labels, Jul 2017 – Dec 2018 | Non-commercial license (CC BY-NC-SA 4.0). The Tianchi listing said it was temporarily unavailable; the OpenI mirror may work instead. | Second HDD group, to check whether the models hold up outside Backblaze |
-| [SMART-Z (Nature Scientific Data, 2025)](https://www.nature.com/articles/s41597-025-05457-z) | HDD | 147,496 HDDs in a Chinese video data center, Mar 2017 – Feb 2018 | Hosting and license not yet checked (the paper page wouldn't load) | Another non-Backblaze HDD group |
-| [USENIX Computer Failure Data Repository (CFDR) / LANL](https://www.usenix.org/cfdr) | HDD (SCSI) | Disk replacement records from Los Alamos high-performance computing clusters, ~1996–2006 (e.g. 1,263 failures among 3,406 disks) | Free. Old links, check that they still work. Primary paper: Schroeder & Gibson, "Disk failures in the real world," FAST '07. | History and comparing against classic results |
-| [`hdfail` in the frailtySurv R package](https://rdrr.io/cran/frailtySurv/man/hdfail.html) | HDD | Cleaned Backblaze subset: 52,422 drives (one row each), 2,885 failures, ~2 years. Columns: `serial`, `model`, `time`, `status`, `temp`, `rsc`, `rer`, `psc` | Free on CRAN | Ready-to-use data for testing survival models before the full pipeline is built |
-
-No public drive-level data was found from Google, Microsoft, or Tencent (Google's 2007 study only published aggregate numbers).
+| Logo | File page | File |
+|---|---|---|
+| Seagate | [File:Seagate-Logo.svg](https://commons.wikimedia.org/wiki/File:Seagate-Logo.svg) | `seagate.svg` |
+| WD (since Feb 2026) | [File:WD_Logo.svg](https://commons.wikimedia.org/wiki/File:WD_Logo.svg) | `wd.svg` |
+| Toshiba | [File:Toshiba_Logo.svg](https://commons.wikimedia.org/wiki/File:Toshiba_Logo.svg) | `toshiba.svg` |

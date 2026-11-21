@@ -119,6 +119,7 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
   overflow-wrap: anywhere;
   line-height: 1.6;
 }
+.model-note { color: var(--text-2); }
 
 .swatch {
   display: inline-block;

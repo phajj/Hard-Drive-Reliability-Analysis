@@ -20,6 +20,12 @@ import pandas as pd
 
 TEMPLATE = Path(__file__).with_name("website_template.html")
 
+# Notes shown next to a model in a card's model list, e.g. for a known-bad model.
+# Rates are from data/samples/model_totals.csv (every drive, not just the sample).
+MODEL_NOTES = {
+    "ST31500541AS": "an old 1.5 TB Seagate (2013-2018) that failed roughly 10% a year",
+}
+
 
 def build_data(s: pd.DataFrame, sample_name: str, by: str = "rpm_class", order: list | None = None) -> dict:
     """Page data for a sample, or any subset of one. sample_name is shown in the footer.
@@ -38,13 +44,15 @@ def build_data(s: pd.DataFrame, sample_name: str, by: str = "rpm_class", order: 
         g = s[s[by] == cls]
         drive_years = g.days.sum() / 365
         failures = int(g.failed.sum())
+        models = sorted(g.model.unique().tolist())
         summary.append({
             "rpm": cls,  # the series key; app.js reads it as "rpm" whatever `by` is
             "drives": int(len(g)),
             "failures": failures,
             "drive_years": round(float(drive_years), 1),
             "afr": round(100 * failures / drive_years, 2),
-            "models": sorted(g.model.unique().tolist()),
+            "models": models,
+            "model_notes": {m: MODEL_NOTES[m] for m in models if m in MODEL_NOTES},
         })
 
     failed = s[s.failed == 1]

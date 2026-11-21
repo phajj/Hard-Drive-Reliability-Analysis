@@ -64,6 +64,7 @@ def render(heading, note, group, drives):
 def maker_page(key, s):
     name, labels, page, note = MAKERS[key]
     data = build_data(s[s.manufacturer.isin(labels)], f"{SAMPLE.name} ({name} drives only)")
+    data["maker"] = key  # app.js shows this maker's logo on every card
     html = render(f"{name}: drive failures by spin speed", note, "RPM class", f"{name} drives")
     return page, data, html
 
