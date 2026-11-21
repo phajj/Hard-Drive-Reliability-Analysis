@@ -1,0 +1,27 @@
+/* One color per manufacturer, for the "All three compared" page. Adds to /rpm/style.css,
+   which colors series through .swatch.rpm-<key> and .dot.rpm-<key>.
+   Violet, magenta and green, so they don't reuse the blue/orange/aqua of the RPM classes on
+   the other pages of this topic. Checked all-pairs (dot chart) with the dataviz palette
+   validator in both modes. Light magenta is under 3:1 against the surface, so every series
+   is also named in text (cards, legend, tooltip). */
+:root {
+  --m-seagate: #6250d6;
+  --m-wd: #e87ba4;
+  --m-toshiba: #008300;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --m-seagate: #9085e9;
+    --m-wd: #d55181;
+    --m-toshiba: #0ca30c;
+  }
+}
+:root[data-theme="dark"] {
+  --m-seagate: #9085e9;
+  --m-wd: #d55181;
+  --m-toshiba: #0ca30c;
+}
+
+.swatch.rpm-seagate, .dot.rpm-seagate { background: var(--m-seagate); fill: var(--m-seagate); }
+.swatch.rpm-wd, .dot.rpm-wd { background: var(--m-wd); fill: var(--m-wd); }
+.swatch.rpm-toshiba, .dot.rpm-toshiba { background: var(--m-toshiba); fill: var(--m-toshiba); }

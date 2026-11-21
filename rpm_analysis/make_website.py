@@ -21,20 +21,25 @@ import pandas as pd
 TEMPLATE = Path(__file__).with_name("website_template.html")
 
 
-def build_data(s: pd.DataFrame, sample_name: str) -> dict:
-    """Page data for a sample, or any subset of one. sample_name is shown in the footer."""
+def build_data(s: pd.DataFrame, sample_name: str, by: str = "rpm_class", order: list | None = None) -> dict:
+    """Page data for a sample, or any subset of one. sample_name is shown in the footer.
+
+    Each value of column `by` becomes one series (a card and a dot color). The default is the
+    RPM class, sorted by speed; pass `order` to group by something else, in that order.
+    """
     s = s.copy()  # the date conversions below shouldn't leak into the caller's frame
     s["first_date"] = pd.to_datetime(s.first_date)
     s["last_date"] = pd.to_datetime(s.last_date)
-    classes = sorted(s.rpm_class.unique(), key=int)
+    present = set(s[by].unique())
+    classes = [c for c in order if c in present] if order else sorted(present, key=int)
 
     summary = []
     for cls in classes:
-        g = s[s.rpm_class == cls]
+        g = s[s[by] == cls]
         drive_years = g.days.sum() / 365
         failures = int(g.failed.sum())
         summary.append({
-            "rpm": cls,
+            "rpm": cls,  # the series key; app.js reads it as "rpm" whatever `by` is
             "drives": int(len(g)),
             "failures": failures,
             "drive_years": round(float(drive_years), 1),
@@ -45,7 +50,7 @@ def build_data(s: pd.DataFrame, sample_name: str) -> dict:
     failed = s[s.failed == 1]
     quarter = failed.last_date.dt.to_period("Q")
     all_quarters = pd.period_range(s.first_date.min().to_period("Q"), s.last_date.max().to_period("Q"), freq="Q")
-    counts = (failed.groupby([quarter, failed.rpm_class]).size()
+    counts = (failed.groupby([quarter, failed[by]]).size()
               .unstack(fill_value=0)
               .reindex(index=all_quarters, columns=classes, fill_value=0))
 

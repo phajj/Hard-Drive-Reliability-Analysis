@@ -41,7 +41,11 @@
     if (parent) parent.appendChild(e);
     return e;
   }
-  function label(rpm) { return rpm + " RPM"; }
+  // Series are RPM classes unless the data says otherwise: the manufacturer comparison
+  // passes DATA.labels (key -> display name) and DATA.class_noun (e.g. "manufacturer").
+  var LABELS = DATA.labels || null;
+  var NOUN = DATA.class_noun || "speed class";
+  function label(rpm) { return LABELS ? LABELS[rpm] : rpm + " RPM"; }
 
   /* Subtitle */
   var perClass = Array.from(new Set(SUMMARY.map(function (c) { return c.drives; })));
@@ -50,7 +54,7 @@
     : fmt(Math.min.apply(null, perClass)) + "–" + fmt(Math.max.apply(null, perClass));
   $("subtitle").textContent =
     "Backblaze drive stats · " + fmt(META.drives) + " drives, " + perClassText +
-    " per speed class · drives first seen " + META.first_seen_min + " to " +
+    " per " + NOUN + " · drives first seen " + META.first_seen_min + " to " +
     META.first_seen_max + ", followed through " + META.data_end;
 
   /* Failure-rate cards */
@@ -122,7 +126,7 @@
 
   var firstQ = QUARTERS[0], lastQ = QUARTERS[N - 1];
   svg.setAttribute("aria-label",
-    "Dot chart of cumulative failures by quarter from " + firstQ + " to " + lastQ + ", one color per RPM class (" +
+    "Dot chart of cumulative failures by quarter from " + firstQ + " to " + lastQ + ", one color per " + (LABELS ? NOUN : "RPM class") + " (" +
     CLASSES.map(label).join(", ") + "). Final totals " +
     SUMMARY.map(function (c) { return label(c.rpm) + " " + fmt(c.failures); }).join(", ") +
     ". Use the Left and Right arrow keys to move between quarters and Escape to hide the tooltip.");
