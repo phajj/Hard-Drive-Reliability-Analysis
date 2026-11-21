@@ -70,9 +70,16 @@
     card.appendChild(h("div", "detail",
       fmt(c.failures) + " failures · " + fmt(c.drive_years) + " drive-years · " +
       fmt(c.drives) + " drives"));
+    // Model list, collapsed behind "N models ▾" until clicked
     var m = c.models;
-    card.appendChild(h("div", "models",
-      m.length + (m.length === 1 ? " model: " : " models: ") + m.join(", ")));
+    var box = h("details", "models");
+    var sum = h("summary", "", m.length + (m.length === 1 ? " model" : " models"));
+    sum.appendChild(h("span", "chev"));
+    box.appendChild(sum);
+    var list = h("ul", "model-list");
+    m.forEach(function (name) { list.appendChild(h("li", "", name)); });
+    box.appendChild(list);
+    card.appendChild(box);
     cards.appendChild(card);
   });
 

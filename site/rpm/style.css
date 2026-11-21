@@ -91,7 +91,34 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 }
 .caption { color: var(--text-2); font-size: 13px; }
 .detail { color: var(--text-2); font-size: 13px; margin-top: 12px; }
-.models { color: var(--muted); font-size: 12px; margin-top: 6px; overflow-wrap: anywhere; }
+.models { color: var(--muted); font-size: 12px; margin-top: 6px; }
+.models summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.models summary::-webkit-details-marker { display: none; }
+.models summary:hover { color: var(--text-2); }
+.models summary:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 2px; }
+.models .chev {
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .15s;
+}
+.models[open] .chev { transform: translateY(1px) rotate(-135deg); }
+.model-list {
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
 
 .swatch {
   display: inline-block;
