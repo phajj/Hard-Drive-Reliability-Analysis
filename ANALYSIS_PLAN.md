@@ -8,13 +8,32 @@ All in `data/samples/`, built by `scripts/build_samples.py`. Drives are picked a
 | `failed_1000.csv` | 1000 random drives that failed. Our main sample. |
 | `hdd_random_1000.csv` | 1000 random data HDDs (the ones that store customer data), failed or not |
 | `model_totals.csv` | Every model: number of drives, failures, drive-days and drive-hours. Used for failure rates. |
+| `maker_failed_2000.csv` | 2000 failed data HDDs from each maker (Seagate, WD, Toshiba). For comparing makers. |
+| `maker_random_2000.csv` | 2000 data HDDs from each maker, failed or not. For survival curves by maker. |
+| `by_maker/<maker>_<sample>.csv` | The three files above split by maker (`seagate`, `wd`, `toshiba`), HDDs only, with a `manufacturer` column. Made by `scripts/split_by_maker.py`. |
 
 We only analyze HDDs. `failed_1000.csv` can include a few SSDs, so filter to `drive_type = HDD`.
 
 The 1000 failed drives only tell us how long drives lasted *when* they failed. To compare how *often* models fail we also need the drives that didn't fail, which is what `model_totals.csv` is for.
 
+### Why each maker gets the same number of drives
+When we went to compare the three makers, the old samples didn't hold up. The 1000 failed drives were picked from everything, so they follow Backblaze's fleet: 630 Seagate, 211 WD and only 154 Toshiba. Anything we say about Toshiba from 154 drives is shaky next to Seagate's 630.
+
+We had two options:
+- **Same percentage from each maker** (say 10% of each). The sample still looks like the fleet, so Toshiba is still the smallest and noisiest group. This is the better choice if you want one number for all drives together.
+- **Same number from each maker** (2000 each). Every maker's results are about equally reliable, so a gap between them is easier to trust. This is the better choice when the point is comparing the groups, which is what we're doing.
+
+We went with the same number. The proper name is **stratified sampling with equal allocation**. Each maker is a stratum (a group sampled on its own), and each gets the same n. The 10% version is called proportional allocation. Inside each maker the pick is still random, so each maker's mix of models stays the same as in the real data.
+
+Two things to keep in mind:
+- Don't pool the maker files and report one "all drives" number. Seagate is underweighted and Toshiba is overweighted. If you need one, weight each maker by its share of drives.
+- Failure rates (failures per drive-year) don't come from these samples. They come from `model_totals.csv`, which counts every drive.
+
+2000 is the cap we picked because Toshiba only has about 5,600 failed HDDs in total. It's one setting (`N_PER_MAKER`) in `build_samples.py`.
+
 ### Columns in the sample files
 - `serial_number`, `model`, `drive_type` (HDD or SSD), `role` (boot or data), `capacity_bytes`, `datacenter`
+- `manufacturer`: only in the `maker_*` files
 - `first_date`, `last_date`: first and last day the drive shows up (for failed drives, `last_date` is the day it failed)
 - `days_observed`: number of daily reports for the drive
 - `failed`: 1 if it failed, 0 if it was still running or was taken out for another reason
@@ -27,7 +46,7 @@ The 1000 failed drives only tell us how long drives lasted *when* they failed. T
    - Run every model on Seagate, Western Digital and Toshiba separately, then compare the three. The `manufacturer` column in `data/drive_models.csv` says which is which (join on `model`). HGST and Hitachi count as WD; other makers are left out.
    - HDD drive-days by maker: Seagate 48%, Western Digital 30% (12% WDC + 16% HGST + 2% Hitachi), Toshiba 21%.
 2. **Spin speed (RPM).** RPM isn't in the data. We'll make `data/model_specs.csv` by hand from spec sheets for the models that show up, then check whether RPM lines up with failure rate.
-3. **Seagate vs Western Digital vs Toshiba.** Put the per-manufacturer results from step 1 side by side.
+3. **Seagate vs Western Digital vs Toshiba.** Put the per-manufacturer results from step 1 side by side. Use the `maker_*` samples, which have the same number of drives per maker (see above).
    - Compare power-on hours at failure and failures per drive-year for each maker.
    - Since most drives haven't failed, compare survival curves rather than plain averages.
    - Makers bought different models in different years, so compare drives of similar age and capacity where we can. Otherwise a maker difference may really be an era difference.

@@ -39,13 +39,14 @@ It sets up `.venv` and `.env` the first time, then runs these in order (about 10
 | `drive_types.py` | Labels models HDD/SSD, boot/data and manufacturer -> `data/drive_models.csv` |
 | `check_failed_rows.py` | Checks if failed drives drop out of later reports |
 | `build_samples.py` | Builds the samples -> `data/samples/` |
+| `split_by_maker.py` | Splits the samples by manufacturer -> `data/samples/by_maker/` |
 
 It stops at the first step that fails. To run one step on its own, activate the venv and run it from inside `scripts/`, e.g. `python build_samples.py`.
 
 If PowerShell blocks the script, run `Set-ExecutionPolicy -Scope Process RemoteSigned` first.
 
 Checking the output:
-- Each file in `data/samples/` should have 1000 drives.
+- Each `_1000` file in `data/samples/` should have 1000 drives.
 - Every drive in `failed_1000.csv` should have `failed = 1`.
 - Running `build_samples.py` again should give the same files (the seed is fixed).
 
@@ -55,6 +56,7 @@ The results website is a small Node app (Express) that serves the `site/` folder
 - `site/index.html`: homepage, one card per topic
 - `site/assets/nav.js`: the list of topics. It builds the nav bar on every page and the homepage cards.
 - `site/<topic>/`: one folder per topic, e.g. `site/rpm/` (made by `rpm_analysis/make_website.py`)
+- `site/manufacturers/`: the spin speed page for each maker (made by `rpm_analysis/make_maker_pages.py`)
 
 Adding a topic: make `site/<topic>/index.html`, add it to `TOPICS` in `nav.js`, and put this in the page's `<head>` and top of `<body>`:
 ```html

@@ -41,6 +41,7 @@ querying Backblaze's hosted copy, so it needs no access keys.
 | 6a. Sample (main) | `python sample_by_rpm.py` | `sample.parquet`: era-matched, 5,000 drives per class |
 | 6b. Sample (all eras) | `python sample_by_rpm.py --all-eras --out sample_all_eras.parquet` | `sample_all_eras.parquet`: comparison sample |
 | 7. Website | `python make_website.py` | `../site/rpm/index.html` (served by the site, see the root README) |
+| 8. Maker pages | `python make_maker_pages.py seagate` (then `wd`, `toshiba`, `compare`) | `../site/manufacturers/`: the same page for one maker's drives, plus a page comparing all three |
 
 ### Step 2 notes
 - Each zip is extracted to `work/`, summarized, and the CSVs are deleted, so you only need
@@ -81,6 +82,12 @@ querying Backblaze's hosted copy, so it needs no access keys.
 - The page's script is `site/rpm/app.js` and its styles are `site/rpm/style.css`. Edit them there, not in the template.
 - Each page's data is written to its own file next to it (`index.html` -> `index.data.js`).
 - Re-run it after redrawing the sample.
+
+### Step 8 notes
+- `make_maker_pages.py` builds the Seagate vs WD vs Toshiba pages: the same spin speed page, but only one maker's drives from `sample_all_eras.parquet`. HGST counts as WD.
+- The pages reuse `site/rpm/app.js` and `style.css`, so changes there show up on both topics.
+- Toshiba only has 7200 RPM drives, so its page has one class.
+- `python make_maker_pages.py compare` builds `compare.html`: the same chart with one series per maker, all speeds together. It reads `data/samples/maker_random_2000.csv` (2,000 drives per maker, from `scripts/build_samples.py`), not the all-eras sample, so run that first. Its colors are in `site/manufacturers/makers.css`.
 
 ## Interpreting the results
 See [RPM_ANALYSIS.md](RPM_ANALYSIS.md) for what each output means, the confounding problems

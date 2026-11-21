@@ -21,10 +21,10 @@
     },
     {
       id: "manufacturers",
-      title: "Seagate vs WD vs Toshiba",
+      title: "Seagate vs Western Digital vs Toshiba",
       href: "/manufacturers/",
-      blurb: "The same models run on each of the three big manufacturers, then compared side by side. HGST and Hitachi count as Western Digital.",
-      status: "soon"
+      blurb: "The spin speed page for each of the three big manufacturers: failure rate per RPM class and failures over time.",
+      status: "live"
     }
   ];
 

@@ -16,7 +16,7 @@ if (-not (Test-Path .env)) {
 }
 
 Set-Location scripts
-foreach ($step in "connect.py", "drive_types.py", "check_failed_rows.py", "build_samples.py") {
+foreach ($step in "connect.py", "drive_types.py", "check_failed_rows.py", "build_samples.py", "split_by_maker.py") {
     Write-Host "`n=== $step ==="
     & $py $step
     if ($LASTEXITCODE -ne 0) { throw "$step failed" }
