@@ -29,6 +29,11 @@
       maximumFractionDigits: digits || 0
     });
   }
+  // "2026-09-30" -> "09/30/2026" (month/day/year)
+  function mdy(iso) {
+    var p = String(iso).split("-");
+    return p.length === 3 ? p[1] + "/" + p[2] + "/" + p[0] : iso;
+  }
   function h(tag, cls, text) {
     var e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -54,8 +59,8 @@
     : fmt(Math.min.apply(null, perClass)) + "–" + fmt(Math.max.apply(null, perClass));
   $("subtitle").textContent =
     "Backblaze drive stats · " + fmt(META.drives) + " drives, " + perClassText +
-    " per " + NOUN + " · drives first seen " + META.first_seen_min + " to " +
-    META.first_seen_max + ", followed through " + META.data_end;
+    " per " + NOUN + " · drives first seen " + mdy(META.first_seen_min) + " to " +
+    mdy(META.first_seen_max) + ", followed through " + mdy(META.data_end);
 
   /* Failure-rate cards */
   var cards = $("cards");
@@ -319,5 +324,5 @@
   footer.appendChild(h("p", "", "A drive’s failure date is the last day it reported. Backblaze marks failure = 1 on that day."));
   footer.appendChild(h("p", "", "AFR (annualized failure rate) = failures ÷ drive-years, where drive-years = days observed ÷ 365."));
   footer.appendChild(h("p", "", "Source: Backblaze Hard Drive Data, sample file " + META.sample_file + "."));
-  footer.appendChild(h("p", "", "Generated " + META.generated + "."));
+  footer.appendChild(h("p", "", "Generated " + mdy(META.generated) + "."));
 })();
