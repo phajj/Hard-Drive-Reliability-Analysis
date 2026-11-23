@@ -106,6 +106,29 @@
     });
     box.appendChild(list);
     card.appendChild(box);
+    // Failure rate per drive-age band (piecewise-constant rate model), collapsed like the model list
+    var bands = DATA.model && DATA.model[c.rpm] ? DATA.model[c.rpm].bands : null;
+    if (bands) {
+      var ages = h("details", "models");
+      var asum = h("summary", "", "Failure rate by drive age");
+      asum.appendChild(h("span", "chev"));
+      ages.appendChild(asum);
+      var tbl = h("table", "age-rates");
+      var head = h("tr");
+      ["Age", "Rate", "95% range", "Failures"].forEach(function (t) { head.appendChild(h("th", "", t)); });
+      tbl.appendChild(head);
+      bands.forEach(function (b) {
+        if (b.rate === null) return; // no drives that old in this class
+        var tr = h("tr");
+        tr.appendChild(h("td", "", b.to === null ? fmt(b.from) + "+ yr" : fmt(b.from) + "–" + fmt(b.to) + " yr"));
+        tr.appendChild(h("td", "", b.rate.toFixed(2) + "%"));
+        tr.appendChild(h("td", "", b.low.toFixed(2) + "–" + b.high.toFixed(2) + "%"));
+        tr.appendChild(h("td", "", fmt(b.failures)));
+        tbl.appendChild(tr);
+      });
+      ages.appendChild(tbl);
+      card.appendChild(ages);
+    }
     cards.appendChild(card);
   });
 
@@ -212,6 +235,33 @@
     }
   });
 
+  /* Model M1b (failure rate by drive age): 95% range band + expected line, behind the dots.
+     Color comes from the class's dot, so pages with their own series keys work too. */
+  var MODEL = DATA.model || null;
+  if (MODEL) {
+    var firstDot = dotsByIdx[0][0];
+    CLASSES.forEach(function (rpm, ci) {
+      var m = MODEL[rpm];
+      if (!m) return;
+      var color = getComputedStyle(dotsByIdx[0][ci]).fill;
+      var x = function (i) { return xCenter(i) + OFFSETS[ci]; };
+      var top = m.high.map(function (v, i) { return x(i) + "," + yScale(Math.min(v, scale.top)); });
+      var bottom = m.low.map(function (v, i) { return x(i) + "," + yScale(v); }).reverse();
+      svg.insertBefore(s("polygon", {
+        class: "model-band", points: top.concat(bottom).join(" "), fill: color
+      }), firstDot);
+      svg.insertBefore(s("polyline", {
+        class: "model-line",
+        points: m.expected.map(function (v, i) { return x(i) + "," + yScale(v); }).join(" "),
+        stroke: color
+      }), firstDot);
+    });
+    var key = h("span", "model-key");
+    key.appendChild(h("span", "line-swatch"));
+    key.appendChild(document.createTextNode("Model: failure rate by drive age (shaded: 95% range)"));
+    legend.appendChild(key);
+  }
+
   /* Crosshair */
   var crosshair = s("line", {
     class: "crosshair",
@@ -255,6 +305,11 @@
       appendCount(cnt, rpm, i);
       row.appendChild(cnt);
       tip.appendChild(row);
+      if (MODEL && MODEL[rpm]) {
+        var m = MODEL[rpm];
+        tip.appendChild(h("div", "model-row",
+          "model " + fmt(m.expected[i]) + " (" + fmt(m.low[i]) + "–" + fmt(m.high[i]) + ")"));
+      }
     });
   }
 
@@ -343,7 +398,14 @@
   /* Footer */
   var footer = $("footer");
   footer.appendChild(h("p", "", "A drive’s failure date is the last day it reported. Backblaze marks failure = 1 on that day."));
-  footer.appendChild(h("p", "", "AFR (annualized failure rate) = failures ÷ drive-years, where drive-years = days observed ÷ 365."));
+  footer.appendChild(h("p", "", "AFR (annualized failure rate) = failures / drive-years, where drive-years = days observed / 365."));
+  if (MODEL) {
+    footer.appendChild(h("p", "", "Model line (piecewise-constant rate): drive age is split into one-year bands " +
+      "(0–1, 1–2, … 8+ years), and each class gets its own failure rate in each band, r = failures / drive-years " +
+      "in that band. A drive’s age is its power-on hours at its first report plus the time since. The expected " +
+      "total by a quarter adds up, for every band, r × drive-years spent in that band up to that quarter. The " +
+      "shaded band is the 95% Poisson range around it, quarter by quarter. Dots outside it mean the model misses there."));
+  }
   footer.appendChild(h("p", "", "Source: Backblaze Hard Drive Data, sample file " + META.sample_file + "."));
   footer.appendChild(h("p", "", "Generated " + mdy(META.generated) + "."));
   if (SHOWS_LOGOS) {
