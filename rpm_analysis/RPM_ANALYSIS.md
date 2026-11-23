@@ -35,7 +35,7 @@ with 1,000+ drives (SSDs excluded):
 The 7200 row includes ST3000DM001, which is excluded from the analysis (see
 [Exclusions](#exclusions)). Without it, the 7200 class is 31 models, 437,438 drives and 23,211 failures.
 
-**Raw annualized failure rates** (failures ÷ drive-years, whole population, no adjustment,
+**Raw annualized failure rates** (failures / drive-years, whole population, no adjustment,
 excluded models removed):
 
 | Speed | Drive-years | AFR |
