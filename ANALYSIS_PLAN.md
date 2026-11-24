@@ -38,7 +38,7 @@ Two things to keep in mind:
 - `days_observed`: number of daily reports for the drive
 - `failed`: 1 if it failed, 0 if it was still running or was taken out for another reason
 - `poh_first`, `poh_last`: power-on hours at the first and last report. **`poh_last` is our measure of drive life.**
-- `poh_ratio`: power-on hours gained ÷ hours on the calendar over the same stretch. Should be close to 1.
+- `poh_ratio`: power-on hours gained / hours on the calendar over the same stretch. Should be close to 1.
 - `poh_suspect`: true if the power-on hours look off (ratio far from 1, zero, or over 15 years). Check these before using them.
 
 ## What we look at first

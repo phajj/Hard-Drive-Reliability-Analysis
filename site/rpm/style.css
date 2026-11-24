@@ -120,6 +120,10 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
   line-height: 1.6;
 }
 .model-note { color: var(--text-2); }
+.age-rates { margin-top: 6px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.age-rates th { font-weight: 500; text-align: right; padding: 0 0 2px 12px; color: var(--muted); }
+.age-rates td { text-align: right; padding: 1px 0 1px 12px; color: var(--text-2); }
+.age-rates th:first-child, .age-rates td:first-child { text-align: left; padding-left: 0; }
 
 .swatch {
   display: inline-block;
@@ -169,6 +173,11 @@ h2 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
 .dot.rpm-5900 { fill: var(--s-5900); }
 .dot.rpm-7200 { fill: var(--s-7200); }
 .hit { fill: transparent; stroke: none; }
+/* Model M1: same color as the class's dots (set from JS), drawn behind them */
+.model-band { fill-opacity: 0.14; stroke: none; }
+.model-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.legend .line-swatch { width: 16px; height: 2px; background: var(--muted); border-radius: 1px; }
+.tip .model-row { color: var(--muted); font-size: 12px; margin: -2px 0 4px 16px; }
 
 .tip {
   position: absolute;

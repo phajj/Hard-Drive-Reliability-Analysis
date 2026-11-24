@@ -8,15 +8,25 @@ same folder (../site/rpm/).
 A drive's failure date is the last day it reported (Backblaze marks failure = 1 on that day).
 AFR = failures / drive-years, where drive-years = days observed / 365.
 
+Each class also gets the piecewise-constant rate model from MODELS.md (one failure rate per
+drive-age band): the expected cumulative failures per quarter and a 95% Poisson range, drawn as
+a line and band behind the dots, plus each band's rate for the cards. The sample needs a
+first_poh column (power-on hours at the first report).
+
 Usage:
     python make_website.py [--sample sample.parquet] [--out ../site/rpm/index.html]
 """
 import argparse
 import json
+import sys
 from datetime import date
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "modeling"))
+from reliability import HOURS_PER_YEAR, piecewise_curve  # noqa: E402
 
 TEMPLATE = Path(__file__).with_name("website_template.html")
 
@@ -62,9 +72,33 @@ def build_data(s: pd.DataFrame, sample_name: str, by: str = "rpm_class", order: 
               .unstack(fill_value=0)
               .reindex(index=all_quarters, columns=classes, fill_value=0))
 
+    # Piecewise-constant rate model (MODELS.md): one failure rate per drive-age band, per class.
+    # A drive's age = power-on hours at its first report + calendar time since. Day numbers
+    # count from 1970-01-01; a drive is at risk from first_date to the day after last_date.
+    to_day = lambda x: np.asarray(x, dtype="datetime64[D]").astype(np.int64)
+    q_start = to_day(all_quarters.start_time)
+    q_end = to_day(all_quarters.end_time) + 1
+    model = {}
+    for cls in classes:
+        g = s[s[by] == cls]
+        curve = piecewise_curve(g.first_poh.to_numpy() / HOURS_PER_YEAR, to_day(g.first_date),
+                                to_day(g.last_date) + 1, g.failed.to_numpy(), q_start, q_end)
+        model[cls] = {
+            "expected": [round(float(v), 1) for v in curve["expected"]],
+            "low": [int(v) for v in curve["low"]],
+            "high": [int(v) for v in curve["high"]],
+            "bands": [{"from": float(b.age_from), "to": None if np.isinf(b.age_to) else float(b.age_to),
+                       "failures": int(b.failures), "drive_years": round(float(b.drive_years), 1),
+                       "rate": None if np.isnan(b.rate) else round(100 * b.rate, 2),
+                       "low": None if np.isnan(b.rate_low) else round(100 * b.rate_low, 2),
+                       "high": None if np.isnan(b.rate_high) else round(100 * b.rate_high, 2)}
+                      for b in curve["rates"].itertuples()],
+        }
+
     return {
         "quarters": [f"{p.year} Q{p.quarter}" for p in all_quarters],
         "series": {cls: [int(v) for v in counts[cls]] for cls in classes},
+        "model": model,
         "summary": summary,
         "meta": {
             "sample_file": sample_name,

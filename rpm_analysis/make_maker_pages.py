@@ -73,7 +73,7 @@ def compare_page():
     # This sample already uses the repo's maker names (HGST counted as WD).
     to_key = {name: key for key, (name, *_) in MAKERS.items()}
     s = pd.read_csv(COMPARE_SAMPLE)
-    s = s.assign(maker=s.manufacturer.map(to_key), days=s.days_observed)
+    s = s.assign(maker=s.manufacturer.map(to_key), days=s.days_observed, first_poh=s.poh_first)
     data = build_data(s, COMPARE_SAMPLE.name, by="maker", order=list(MAKERS))
     data["labels"] = {key: name for key, (name, *_) in MAKERS.items()}
     data["class_noun"] = "manufacturer"
