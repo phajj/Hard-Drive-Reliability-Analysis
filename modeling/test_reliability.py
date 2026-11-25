@@ -9,14 +9,14 @@ the study already running (left truncation) and most are still alive at the end
   2. Ignoring the entry age gives a wrong answer (shows why delayed entry matters).
   3. The AFR CI covers the true rate about 95% of the time.
   4. The conditional failure formula (M5) matches the simulation (M6).
-  5. Piecewise-constant rates: recovers known rates per age band; one band gives plain F/E;
-     the curve over time ends at the observed total and its band covers ~95%.
+  5. Piecewise-constant rates: recovers known rates per age interval; one interval gives plain F/E;
+     the curve over time ends at the observed total and its range covers ~95%.
   6. A power-on-hours counter that rolled over at 65,536 gets fixed, and one that didn't is left alone.
 """
 import numpy as np
 import pandas as pd
 
-from reliability import (afr_ci, band_of, cond_fail_prob, fit_weibull, km, piecewise_curve,
+from reliability import (afr_ci, interval_of, cond_fail_prob, fit_weibull, km, piecewise_curve,
                          piecewise_rates, simulate_failure_ages, unwrap_poh)
 
 TRUE_K, TRUE_LAM = 1.8, 8.0
@@ -37,14 +37,14 @@ PW_RATES = np.array([0.04, 0.015, 0.025, 0.06])  # a bathtub: high, low, rising,
 
 
 def piecewise_drives(n=40000):
-    """Drives whose failure rate is PW_RATES[j] in age band j. Each enters at age a and is
+    """Drives whose failure rate is PW_RATES[j] in age interval j. Each enters at age a and is
     followed up to 6 years. Failure age by inverse transform on the cumulative hazard."""
     a = rng.uniform(0, 4, size=n)
     end = a + rng.uniform(0.5, 6, size=n)
     lo, hi = np.array(PW_EDGES[:-1]), np.array(PW_EDGES[1:])
-    cum = np.concatenate([[0], np.cumsum(PW_RATES[:-1] * (hi[:-1] - lo[:-1]))])  # H at each band start
-    band = np.searchsorted(lo, a, "right") - 1
-    H_a = cum[band] + PW_RATES[band] * (a - lo[band])  # cumulative hazard at entry age a
+    cum = np.concatenate([[0], np.cumsum(PW_RATES[:-1] * (hi[:-1] - lo[:-1]))])  # H at each interval start
+    interval = np.searchsorted(lo, a, "right") - 1
+    H_a = cum[interval] + PW_RATES[interval] * (a - lo[interval])  # cumulative hazard at entry age a
     target = H_a + rng.exponential(size=n)            # alive at a, so add Exp(1) hazard
     j = np.searchsorted(cum, target, "right") - 1
     life = lo[j] + (target - cum[j]) / PW_RATES[j]
@@ -87,12 +87,12 @@ def main():
     results.append(check("M5 formula vs M6 simulation", np.allclose(formula, simulated, atol=0.005),
                          f"formula {np.round(formula, 4)}, simulated {np.round(simulated, 4)}"))
 
-    results.append(check("age band edges", list(band_of([0.0, 0.5, 1.0, 1.01, 9.0])) == [-1, 0, 0, 1, 8],
-                         "age exactly 1.0 counts in band 0-1"))
+    results.append(check("age interval edges", list(interval_of([0.0, 0.5, 1.0, 1.01, 9.0])) == [-1, 0, 0, 1, 8],
+                         "age exactly 1.0 counts in interval 0-1"))
 
     p = piecewise_drives()
     one = piecewise_rates(p.a, p.t, p.d, edges=[0, np.inf])
-    results.append(check("one band = plain F/E", np.isclose(one.rate[0], p.d.sum() / (p.t - p.a).sum()),
+    results.append(check("one interval = plain F/E", np.isclose(one.rate[0], p.d.sum() / (p.t - p.a).sum()),
                          f"{one.rate[0]:.4f}"))
     est = piecewise_rates(p.a, p.t, p.d, edges=PW_EDGES)
     hit = ((est.rate_low <= PW_RATES) & (PW_RATES <= est.rate_high)).sum()
@@ -108,7 +108,7 @@ def main():
     per_q = np.diff(curve["expected"], prepend=0)
     sims = rng.poisson(per_q, size=(2000, per_q.size)).cumsum(axis=1)
     inside = ((sims >= curve["low"]) & (sims <= curve["high"]))[:, per_q.cumsum() > 5].mean()
-    results.append(check("curve band coverage", 0.93 <= inside <= 0.99, f"{inside:.1%} of points inside (target ~95%)"))
+    results.append(check("curve range coverage", 0.93 <= inside <= 0.99, f"{inside:.1%} of points inside (target ~95%)"))
 
     first = pd.Series(["2016-01-01"] * 2)
     last = pd.Series(pd.to_datetime("2016-01-01") + pd.to_timedelta([3000, 3000], unit="D"))
