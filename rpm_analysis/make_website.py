@@ -9,8 +9,8 @@ A drive's failure date is the last day it reported (Backblaze marks failure = 1 
 AFR = failures / drive-years, where drive-years = days observed / 365.
 
 Each class also gets the piecewise-constant rate model from MODELS.md (one failure rate per
-drive-age band): the expected cumulative failures per quarter and a 95% Poisson range, drawn as
-a line and band behind the dots, plus each band's rate for the cards. The sample needs a
+drive-age interval): the expected cumulative failures per quarter and a 95% Poisson range, drawn as
+a line and shaded range behind the dots, plus each interval's rate for the cards. The sample needs a
 first_poh column (power-on hours at the first report).
 
 Usage:
@@ -72,7 +72,7 @@ def build_data(s: pd.DataFrame, sample_name: str, by: str = "rpm_class", order: 
               .unstack(fill_value=0)
               .reindex(index=all_quarters, columns=classes, fill_value=0))
 
-    # Piecewise-constant rate model (MODELS.md): one failure rate per drive-age band, per class.
+    # Piecewise-constant rate model (MODELS.md): one failure rate per drive-age interval, per class.
     # A drive's age = power-on hours at its first report + calendar time since. Day numbers
     # count from 1970-01-01; a drive is at risk from first_date to the day after last_date.
     to_day = lambda x: np.asarray(x, dtype="datetime64[D]").astype(np.int64)
@@ -87,7 +87,7 @@ def build_data(s: pd.DataFrame, sample_name: str, by: str = "rpm_class", order: 
             "expected": [round(float(v), 1) for v in curve["expected"]],
             "low": [int(v) for v in curve["low"]],
             "high": [int(v) for v in curve["high"]],
-            "bands": [{"from": float(b.age_from), "to": None if np.isinf(b.age_to) else float(b.age_to),
+            "intervals": [{"from": float(b.age_from), "to": None if np.isinf(b.age_to) else float(b.age_to),
                        "failures": int(b.failures), "drive_years": round(float(b.drive_years), 1),
                        "rate": None if np.isnan(b.rate) else round(100 * b.rate, 2),
                        "low": None if np.isnan(b.rate_low) else round(100 * b.rate_low, 2),

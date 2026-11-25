@@ -106,9 +106,9 @@
     });
     box.appendChild(list);
     card.appendChild(box);
-    // Failure rate per drive-age band (piecewise-constant rate model), collapsed like the model list
-    var bands = DATA.model && DATA.model[c.rpm] ? DATA.model[c.rpm].bands : null;
-    if (bands) {
+    // Failure rate per drive-age interval (piecewise-constant rate model), collapsed like the model list
+    var intervals = DATA.model && DATA.model[c.rpm] ? DATA.model[c.rpm].intervals : null;
+    if (intervals) {
       var ages = h("details", "models");
       var asum = h("summary", "", "Failure rate by drive age");
       asum.appendChild(h("span", "chev"));
@@ -117,7 +117,7 @@
       var head = h("tr");
       ["Age", "Rate", "95% range", "Failures"].forEach(function (t) { head.appendChild(h("th", "", t)); });
       tbl.appendChild(head);
-      bands.forEach(function (b) {
+      intervals.forEach(function (b) {
         if (b.rate === null) return; // no drives that old in this class
         var tr = h("tr");
         tr.appendChild(h("td", "", b.to === null ? fmt(b.from) + "+ yr" : fmt(b.from) + "–" + fmt(b.to) + " yr"));
@@ -400,10 +400,10 @@
   footer.appendChild(h("p", "", "A drive’s failure date is the last day it reported. Backblaze marks failure = 1 on that day."));
   footer.appendChild(h("p", "", "AFR (annualized failure rate) = failures / drive-years, where drive-years = days observed / 365."));
   if (MODEL) {
-    footer.appendChild(h("p", "", "Model line (piecewise-constant rate): drive age is split into one-year bands " +
-      "(0–1, 1–2, … 8+ years), and each class gets its own failure rate in each band, r = failures / drive-years " +
-      "in that band. A drive’s age is its power-on hours at its first report plus the time since. The expected " +
-      "total by a quarter adds up, for every band, r × drive-years spent in that band up to that quarter. The " +
+    footer.appendChild(h("p", "", "Model line (piecewise-constant rate): drive age is split into one-year age intervals " +
+      "(0–1, 1–2, … 8+ years), and each class gets its own failure rate in each interval, r = failures / drive-years " +
+      "in that interval. A drive’s age is its power-on hours at its first report plus the time since. The expected " +
+      "total by a quarter adds up, for every interval, r × drive-years spent in that interval up to that quarter. The " +
       "shaded band is the 95% Poisson range around it, quarter by quarter. Dots outside it mean the model misses there."));
   }
   footer.appendChild(h("p", "", "Source: Backblaze Hard Drive Data, sample file " + META.sample_file + "."));
